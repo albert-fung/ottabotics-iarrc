@@ -36,7 +36,7 @@ DATA_URL = 'http://download.tensorflow.org/models/image/imagenet/inception-2015-
 def maybe_download_and_extract():
     """Download and extract model tar file."""
     dest_directory = "imagenet/"
-    print("FLAGS.model_dir: ", dest_directory)
+    print("model directory: ", dest_directory)
     if not os.path.exists(dest_directory):
         os.makedirs(dest_directory)
     filename = DATA_URL.split('/')[-1]
@@ -108,12 +108,39 @@ clf = LinearSVC(C=1.0, loss='squared_hinge', penalty='l2',multi_class='ovr')
 clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 
-print(">>> X train:", X_train)
-print(">>> X test:", X_test)
-print(">>> y train:", y_train)
-print(">>> y test:", y_test)
+print(">>> X_test[0]:",len(X_test[0]))  ### X_test is a list of image features, each 2048 long
+# print(">>> X_test[0][0]",X_test[0][0])
+# print(">>> X train:", X_train)
+# print(">>> X test:", X_test)
+# print(">>> y train:", y_train)
+# print(">>> y test:", y_test)
 
 print(">>> prediction finished")
+
+def extract_features_for_one(image_name):
+    nb_features = 2048
+    features = np.empty((1,nb_features))
+    create_graph()
+    with tf.Session() as sess:
+        next_to_last_tensor = sess.graph.get_tensor_by_name('pool_3:0')
+        image_data = gfile.FastGFile(image_name, 'rb').read()
+        predictions = sess.run(next_to_last_tensor, {'DecodeJpeg/contents:0' : image_data})
+        features[0,:] = np.squeeze(predictions)
+
+        return features
+
+def predict_image(image_name):
+    features = extract_features_for_one(image_name)
+    clf_ = LinearSVC(C=1.0, loss='squared_hinge', penalty='l2', multi_class='ovr')
+    clf_.fit(X_train, y_train)
+    prediction = clf.predict(features)
+
+    print(prediction)
+
+print("=======================================")
+print("image prediction:")
+predict_image("images/water_bottle_12.jpg")
+print("=======================================")
 
 def plot_confusion_matrix(y_true,y_pred):
     print(">>> y_true:",y_true)
