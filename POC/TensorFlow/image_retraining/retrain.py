@@ -22,7 +22,7 @@ from six.moves import urllib
 import sys
 
 
-start_time = time.time()
+start_time_total = time.time()
 
 model_dir = 'imagenet/'
 images_dir = 'images/'
@@ -102,7 +102,7 @@ pickle.dump(labels, open('labels', 'wb'))
 features = pickle.load(open('features'))
 labels = pickle.load(open('labels'))
 
-X_train, X_test, y_train, y_test = cross_validation.train_test_split(features, labels, test_size=0.5, random_state=42)
+X_train, X_test, y_train, y_test = cross_validation.train_test_split(features, labels, test_size=0.2, random_state=42)
 
 clf = LinearSVC(C=1.0, loss='squared_hinge', penalty='l2',multi_class='ovr')
 clf.fit(X_train, y_train)
@@ -174,7 +174,7 @@ print("Accuracy: {0:0.1f}%".format(accuracy_score(y_test,y_pred)*100))
 plot_confusion_matrix(y_test,y_pred)
 print(">>> plot finished")
 
-end_time = time.time()
+end_time_total = time.time()
 
-print(">>> elapsed time:", end_time - start_time)
+print(">>> elapsed time:", end_time_total - start_time_total)
 
