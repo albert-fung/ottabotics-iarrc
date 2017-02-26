@@ -22,6 +22,8 @@ from six.moves import urllib
 import sys
 
 
+start_time = time.time()
+
 model_dir = 'imagenet/'
 images_dir = 'images/'
 list_images = [images_dir+f for f in os.listdir(images_dir) if re.search('jpg|JPG', f)]
@@ -138,4 +140,8 @@ def plot_confusion_matrix(y_true,y_pred):
 print("Accuracy: {0:0.1f}%".format(accuracy_score(y_test,y_pred)*100))
 plot_confusion_matrix(y_test,y_pred)
 print(">>> plot finished")
+
+end_time = time.time()
+
+print(">>> elapsed time:", end_time - start_time)
 
