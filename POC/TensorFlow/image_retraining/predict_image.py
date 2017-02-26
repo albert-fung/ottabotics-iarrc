@@ -60,7 +60,7 @@ def predict_image(image_name):
 
     return prediction
 
-prediction = predict_image("images/" + sys.argv[1])
+prediction = predict_image(sys.argv[1])
 print("=======================================")
 print("image prediction:")
 print(prediction[0])
