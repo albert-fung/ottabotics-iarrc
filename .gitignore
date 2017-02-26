@@ -1,3 +1,6 @@
 POC/TensorFlow/models/downloads
 .idea/
 POC/TensorFlow/image_retraining/imagenet/
+POC/TensorFlow/image_retraining_tf_mod/bottleneck/
+POC/TensorFlow/image_retraining_tf_mod/model/
+POC/TensorFlow/image_retraining_tf_mod/retrain_logs/

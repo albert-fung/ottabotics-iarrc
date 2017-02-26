@@ -11,7 +11,7 @@ from sklearn import cross_validation
 from sklearn.metrics import accuracy_score, confusion_matrix
 from sklearn.svm import SVC, LinearSVC
 import matplotlib.pyplot as plt
-#%matplotlib inline
+# %matplotlib inline
 import pickle
 
 import time
@@ -108,13 +108,19 @@ clf = LinearSVC(C=1.0, loss='squared_hinge', penalty='l2',multi_class='ovr')
 clf.fit(X_train, y_train)
 y_pred = clf.predict(X_test)
 
+print(">>> X train:", X_train)
+print(">>> X test:", X_test)
+print(">>> y train:", y_train)
+print(">>> y test:", y_test)
+
 print(">>> prediction finished")
 
 def plot_confusion_matrix(y_true,y_pred):
     print(">>> y_true:",y_true)
     print(">>> y_pred:", y_pred)
     cm_array = confusion_matrix(y_true,y_pred)
-    print(">>> type cm array:", type(cm_array))
+    print(">>> type cm array:")
+    print(type(cm_array))
     true_labels = np.unique(y_true)
     pred_labels = np.unique(y_pred)
     plt.imshow(cm_array[:-1,:-1], interpolation='nearest', cmap=plt.cm.Blues)
