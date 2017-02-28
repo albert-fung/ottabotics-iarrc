@@ -21,7 +21,7 @@ import os.path
 from six.moves import urllib
 import sys
 
-list_files = check_output("ls test_images/",shell=True).split("\n")
+list_files = check_output("ls resized_test_output/",shell=True).split("\n")
 list_files = list_files[:-1]
 
 model_dir = 'imagenet/'

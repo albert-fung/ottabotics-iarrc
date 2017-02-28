@@ -7,3 +7,5 @@ POC/TensorFlow/image_retraining_tf_mod/retrain_logs/
 POC/TensorFlow/image_retraining/features
 POC/TensorFlow/image_retraining/labels
 POC/TensorFlow/line_angle/model/
+POC/TensorFlow/image_retraining/resized_training_output/
+POC/TensorFlow/image_retraining/resized_test_output/
