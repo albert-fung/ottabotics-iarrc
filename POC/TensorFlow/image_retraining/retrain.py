@@ -25,8 +25,8 @@ import sys
 start_time_total = time.time()
 
 model_dir = 'imagenet/'
-# images_dir = 'images/'
-images_dir = 'resized_training_output/'
+images_dir = 'images/'
+# images_dir = 'resized_training_output/'
 
 # TODO: sort object classes by their parent folder instead of their file names
 list_images = [images_dir+f for f in os.listdir(images_dir) if re.search('jpg|JPG', f)]
