@@ -1,7 +1,7 @@
 # install dependencies
 
-sudo apt-get install python-dev
-sudo apt-get install python-pip
+sudo apt-get -y install python-dev
+sudo apt-get -y install python-pip
 pip install --upgrade pip
 
 # install tensorflow
