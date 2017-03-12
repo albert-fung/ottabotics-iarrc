@@ -73,11 +73,6 @@ void setup() {
 }
 
 void loop() {
-  analogWrite (CH1, 32); delay(2000);       // Left    @1ms  
-  analogWrite(CH1, 50);  delay(2000);       // Neutral @1.615ms
-  analogWrite(CH1, 62);  delay(2000);       // Right   @1.975ms
-  
-  analogWrite (CH2, 32); delay(2000);       // Back    @1ms
-  analogWrite(CH2, 47);  delay(2000);       // Neutral @1.5ms
-  analogWrite(CH2, 65);  delay(2000);       // Forward @2ms
+  analogWrite (CH1,52 );       // 32left /47/62right servo angle variable
+  analogWrite (CH2,47 );       //32back/47/62forwad speed variable
 }
