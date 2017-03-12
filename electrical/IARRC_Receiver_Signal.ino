@@ -68,6 +68,7 @@ void setPwmFrequency(int pin, int divisor) {
 void setup() {
   setPwmFrequency(CH1, 256);     // CH1: Stearing
   setPwmFrequency(CH2, 256);     // CH2: Speed Control
+  analogWrite(CH2, 47);  delay(1000);  //Arduino power by speed control so that when you start the speed control you can start the ardunio code to run the null signal
 }
 
 void loop() {
