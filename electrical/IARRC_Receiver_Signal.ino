@@ -32,7 +32,12 @@
  */
 const int CH1 = 9;
 const int CH2 = 10;
+int servoSpeed = 47;
+int servoAngle = 47;
 
+#include <Servo.h>
+Servo servo1;
+int startbyte;
 
 void setPwmFrequency(int pin, int divisor) {
   byte mode;
@@ -73,6 +78,14 @@ void setup() {
 }
 
 void loop() {
-  analogWrite (CH1,52 );       // 32left /47/62right servo angle variable
-  analogWrite (CH2,47 );       //32back/47/62forwad speed variable
+  
+  if(Serial.available() > 2 ){
+    startbyte = Serial.read();
+    if(startbyte == 255){
+      servoSpeed = Serial.read();
+      servoAngle = Serial.read();
+      }
+   }
+  analogWrite (CH1,servoAngle);       // 32left /47/62right servo angle variable
+  analogWrite (CH2,servoSpeed);       //32back/47/62forwad speed variable
 }
