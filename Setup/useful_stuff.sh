@@ -10,3 +10,7 @@ echo 'set completion-ignore-case On' >> ~/.inputrc
 
 # install imagemagick
 sudo apt-get -y install imagemagick
+
+# install git and gitg
+sudo apt-get install git
+sudo apt-get install gitg
