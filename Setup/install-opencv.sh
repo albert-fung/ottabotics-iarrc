@@ -24,7 +24,7 @@ sudo apt-get install -y libdc1394-22-dev libavcodec-dev libavformat-dev libswsca
 sudo apt-get install -y libtbb-dev libeigen3-dev
 
 # Python:
-sudo apt-get install -y python-dev python-tk python-numpy python3-dev python3-tk python3-numpy
+sudo apt-get install -y python-dev python-tk python-numpy python3-dev python3-tk python3-numpy python-matplotlib
 
 # Java:
 sudo apt-get install -y ant default-jdk
