@@ -10,6 +10,16 @@ img2_colour = cv2.imread('card_query_5_resized.jpg',1)
 stoplight_colour = cv2.imread('stoplight.jpg',1)
 stoplight = cv2.imread('stoplight.jpg',0)
 stoplight_out = cv2.cvtColor(stoplight,cv2.COLOR_GRAY2BGR)
+stoplight_hsv = cv2.cvtColor(stoplight_colour, cv2.COLOR_BGR2HSV)
+
+green = [146,96,73]
+
+h_upper = green[0] + 15
+h_lower = green[0] - 15
+s_upper = green[1] + 15
+s_lower = green[1] - 15
+v_upper = green[2] + 15
+v_lower = green[2] - 15
 
 # Initiate SIFT detector
 sift = cv2.xfeatures2d.SIFT_create()
@@ -66,7 +76,7 @@ if len(good)>MIN_MATCH_COUNT:
     cv2.waitKey(0)
 
     circles = cv2.HoughCircles(stoplight, cv2.HOUGH_GRADIENT, 1.2, 20)
-    print(circles)
+    # print(circles)
     circles = np.uint16(np.around(circles))
     print("Number of circles found: %d" % (len(circles[0,:])))
     for i in circles[0,:]:
@@ -82,10 +92,15 @@ if len(good)>MIN_MATCH_COUNT:
 
 
         center_colour = stoplight_colour[i[1]][i[0]].ravel().tolist()
+        center_colour_hsv = stoplight_hsv[i[1]][i[0]].ravel().tolist()
+        center_colour_hsv[0] = int(center_colour_hsv[0]*2)
+        center_colour_hsv[1] = int(center_colour_hsv[1]/255.0*100.0)
+        center_colour_hsv[2] = int(center_colour_hsv[2]/255.0*100.0)
 
         cv2.circle(stoplight_out,(i[0],i[1]),2,(center_colour[0],center_colour[1],center_colour[2]),30)
 
         print("Colour value at (%d,%d): %s" % (i[0],i[1],str(center_colour)))
+        print("Colour value (hsv) at (%d,%d): %s" % (i[0],i[1],str(center_colour_hsv)))
 
     cv2.imshow("stoplight",stoplight_out)
     cv2.waitKey(0)
