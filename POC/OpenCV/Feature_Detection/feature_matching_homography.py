@@ -78,6 +78,7 @@ if len(good)>MIN_MATCH_COUNT:
     circles = cv2.HoughCircles(stoplight, cv2.HOUGH_GRADIENT, 1.2, 20)
     # print(circles)
     circles = np.uint16(np.around(circles))
+    print(">>> circles: " + str(circles))
     print("Number of circles found: %d" % (len(circles[0,:])))
     for i in circles[0,:]:
         cv2.circle(stoplight_out,(i[0],i[1]),i[2],(255,0,0),2)
