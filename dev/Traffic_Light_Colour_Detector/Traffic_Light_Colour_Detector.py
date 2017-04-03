@@ -172,7 +172,7 @@ def apply_perspective_transform(img, points):
 def main():
     reference = cv2.imread('card_reference_resized.jpg',1)
     query = cv2.imread('card_query_5_resized.jpg',1)
-    traffic_light = cv2.imread('stoplight2.jpg',1)
+    traffic_light = cv2.imread('img_sample_2.jpg',1)
     traffic_light = resize_image(traffic_light,300)
 
     dst_points = match_features(query, reference)
