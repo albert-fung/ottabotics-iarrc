@@ -121,7 +121,7 @@ def resize_image(img, height):
 
 
 def draw_output_line(img,angle):
-    start = (320,470)
+    start = (320,475)
     if angle < 0:
         endx = 640
     elif angle > 0:
@@ -131,9 +131,18 @@ def draw_output_line(img,angle):
 
     # TODO: check if endy is greater than 480
 
-    endy = abs(480 - (320 / np.tan(angle)))
-    if endy > 480:
+    endy = 320.0 / np.tan(angle)
+    if endy > 480 or endy < 0:
         endy = 0
+        endx = 480.0 * np.tan(angle)
+        if angle < 0:
+            endx = 320.0 + endx
+        elif angle > 0:
+            endx = 320.0 - endx            
+        else:
+            endx = 320
+    else:
+        endy = 480 - endy
 
     end = (int(endx), int(endy))
 
@@ -141,10 +150,29 @@ def draw_output_line(img,angle):
     cv2.circle(img,start,5,(0,255,0),-1)
     cv2.circle(img,end,5,(0,255,0),-1)
 
-    print end
+    # print end
+    vis_line = Line((start,end))
+    print "(vis | actual | diff): %d | %d | %d" % (int(vis_line.angle),int(angle),abs(int(vis_line.angle - angle)))
 
     return img
 
+
+def draw_line_ex(img,theta):
+    #img = img.clone()
+    a = np.cos(theta)
+    b = np.sin(theta)
+    #x0 = a*rho
+    #y0 = b*rho
+    x0 = img.shape[1]/2
+    y0 = img.shape[0]/2
+    x1 = int(x0 + 1000*(-b))
+    y1 = int(y0 + 1000*(a))
+    x2 = int(x0 - 1000*(-b))
+    y2 = int(y0 - 1000*(a))
+
+    cv2.line(img,(x1,y1),(x2,y2),(255,0,255),3)
+
+    return img
 
 
 def test_get_line_segments_from_curve():
@@ -170,7 +198,7 @@ def test_get_line_segments_from_curve():
         #cv2.imshow("fawe",maskedges)
         #cv2.waitKey(0)
 
-
+        # cv2.circle(img,(640,480),20, (255,255,0),-1)
 
         """
         #Showing the image
@@ -301,6 +329,8 @@ def test_get_line_segments_from_curve():
             output_angle = output_angle / len(output_buffer)
 
             img = draw_output_line(img, output_angle)
+
+            #img = draw_line_ex(img,output_angle)
 
             ##print output_buffer
 
