@@ -71,6 +71,7 @@ void setPwmFrequency(int pin, int divisor) {
 }
 
 void setup() {
+  Serial.begin (9600);
   setPwmFrequency(CH1, 256);     // CH1: Stearing
   setPwmFrequency(CH2, 256);     // CH2: Speed Control
   analogWrite (CH1,47 );
