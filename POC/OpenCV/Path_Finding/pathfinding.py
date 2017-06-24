@@ -7,7 +7,8 @@ import math
 
 def get_lines():
     """
-    return list of lines (point, point) found by houghlinesp
+    Return list of lines (point, point) found by houghlinesp
+    :return: 
     """
     pass
 
@@ -15,13 +16,18 @@ def get_lines():
 def compute_line_length(line):
     """
     assumptions: line is an array of two points where each point is an array if two integers (x,y)
+    :param line: 
+    :return: 
     """
     length = math.sqrt((line[0][0] - line[1][0])**2 + (line[0][1] - line[1][1])**2)
     return length
 
+
 def compute_line_angle(line):
     """
     angle with vertical
+    :param line: 
+    :return: 
     """
     dx = line[1][0] - line[0][0]
     dy = line[1][1] - line[0][1]
@@ -36,37 +42,55 @@ def compute_line_angle(line):
 
 
 def cluster_lines():
+    """
+    
+    :return: 
+    """
     pass
 
 
 def apply_perspective_transform():
+    """
+    
+    :return: 
+    """
     pass
-
 
 
 def compute_direction(img):
-    # extract lines from image
-
-    # create list of lines sorted by line length
-
-    ### exception/edge cases for longest line in the image
-        # line angled towards outside edge: can be ignored in some cases
-        # slope close to inf (horizontal line): can be ignored in most cases
+    """
+    - extract lines from image
+    - create list of lines sorted by line length
+    - exception/edge cases for longest line in the image
+        - line angled towards outside edge: can be ignored in some cases
+        - slope close to inf (horizontal line): can be ignored in most cases
+    
+    :param img: 
+    :return: 
+    """
     pass
+
 
 def main():
-    # read image from camera
-    # create two regions of interest: left and right halves split vertically
-    # in each half:
-    # get all line segments using houghlinesp
-    # for each line segment, compute line length and angle with horizontal
-    # create clusters for lines of similar angle
-    # after getting two angles (one for each half of the frame), compute average
+    """
+    - read image from camera
+    - create two regions of interest: left and right halves split vertically
+    - in each half:
+    - get all line segments using houghlinesp
+    - for each line segment, compute line length and angle with horizontal
+    - create clusters for lines of similar angle
+    - after getting two angles (one for each half of the frame), compute average
+    :return: 
+    """
     pass
+
 
 def resize_image(img, height):
     """
     Resizes an image to the specified height
+    :param img: 
+    :param height: 
+    :return: 
     """
     ratio = float(height) / img.shape[0]
     dim = (int(img.shape[1]*ratio),height)
@@ -76,6 +100,10 @@ def resize_image(img, height):
 
 
 def test_get_line_segments_from_curve():
+    """
+    
+    :return: 
+    """
     camera = cv2.VideoCapture(0)
     #ret, frame = camera.read()
     frame = cv2.imread("img_sample_1.jpg",1)

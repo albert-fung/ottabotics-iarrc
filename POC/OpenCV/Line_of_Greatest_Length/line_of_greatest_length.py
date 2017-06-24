@@ -7,16 +7,15 @@ from collections import deque
 
 # POC: get all line segments from an image and display the line clustere of greatest length
 
+
 class Line:
     def __init__(self,coords):
         self.coords = coords # ((x1,y1),(x2,y2))
         self.length = self.compute_line_length(coords)
         self.angle = -self.compute_line_angle(coords)
 
-    
     def __str__(self):
         return str(self.angle)
-
 
     def __repr__(self):
         return self.__str__()
@@ -54,10 +53,6 @@ class Line:
     def get_coords(self):
         return self.coords
 
-    
-
-
-
 
 def get_lines():
     """
@@ -80,7 +75,6 @@ def cluster_lines(line_data):
 
 def apply_perspective_transform():
     pass
-
 
 
 def compute_direction(img):
@@ -108,6 +102,7 @@ def main():
     # create clusters for lines of similar angle
     # after getting two angles (one for each half of the frame), compute average
     pass
+
 
 def resize_image(img, height):
     """
@@ -340,13 +335,13 @@ def test_get_line_segments_from_curve():
 
             cv2.putText(img, str(output_angle), (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1.0, (0, 0, 255), 3)
 
-        except:
+        except Exception as e:
+            print "Exception: %s" % e
             cv2.putText(img, "nope", (10, 30), cv2.FONT_HERSHEY_SIMPLEX,1.0, (0, 0, 255), 3)
-
 
         cv2.imshow("asdf",img)
         if cv2.waitKey(30) != 255:
-		    break
+            break
     camera.release()
     cv2.destroyAllWindows()
     
