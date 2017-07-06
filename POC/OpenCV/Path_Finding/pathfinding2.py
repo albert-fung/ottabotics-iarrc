@@ -216,6 +216,65 @@ def compute_cluster_magnitude(cluster):
     return length
 
 
+def split_frame(image, number_of_subimages):
+    """
+    Split an image into a list of subimages
+    :param image: 
+    :param number_of_subimages:
+    :return: 
+    """
+    initial_x = image.shape[1]
+    initial_y = image.shape[0]
+
+    final_y = int(initial_y / number_of_subimages)
+
+    subimage_list = []
+
+    start_index = 0
+    end_index = final_y
+
+    for i in range(number_of_subimages):
+        try:
+            subimage_list.append(image[:][start_index:end_index])
+            start_index = end_index + 1
+            end_index += final_y
+        except Exception as e:
+            print ">>> Exception: %s" % e
+
+    return subimage_list
+
+
+def compute_cluster_direction(cluster):
+    angle_sum = 0
+    for line_segment in cluster:
+        angle_sum += line_segment.angle
+
+    return angle_sum / len(cluster)
+
+
+def generate_weight_list(number_of_weights):
+    weight_list = []
+    for i in range(number_of_weights):
+        weight_list.append(1 / 2**(i+1))
+
+    weight_sum = 0
+    for w in weight_list:
+        weight_sum += w
+
+    weight_diff = 1 - weight_sum
+    weight_comp = weight_diff / number_of_weights
+
+    for i, w in enumerate(weight_list):
+        weight_list[i] += weight_comp
+
+    weight_sum = 0
+    for w in weight_list:
+        weight_sum += w
+    print "DEBUG: weight sum: %s" % weight_sum
+
+    return weight_list
+
+
 def main():
     pass
 
@@ -269,11 +328,107 @@ def test_proximity(use_webcam=False):
         cv2.destroyAllWindows()
 
 
+def test_weighted_sum(use_webcam=False):
+    NUMBER_OF_SUBDIVISIONS = 5
+
+    camera = cv2.VideoCapture(0)
+
+    import time
+
+    while True:
+        start_time = time.time()
+
+        if use_webcam:
+            ret, frame = camera.read()
+        else:
+            frame = cv2.imread("test_sample_3.png", 1)
+        image = apply_preprocessing(frame)
+
+        # TODO: separate frame horizontally into subframes
+
+        subframe_list = split_frame(image, NUMBER_OF_SUBDIVISIONS)
+        # image = subframe_list[0]
+        print "DEBUG: Number of subframes: %s" % len(subframe_list)
+
+        # TODO: get line segments for each subframe
+
+        # 2D array - list of lists of line segments
+        list_of_segment_lists = []
+        for subframe in subframe_list:
+            list_of_segment_lists.append(get_line_segments(subframe))
+
+        # TODO: apply angle clustering to each subframe to get a list of output angles
+
+        clusters_list = []
+        for segment_list in list_of_segment_lists:
+            clusters_list.append(cluster_by_angle(segment_list))
+
+        # TODO: find longest line cluster for each cluster
+        # set output angle for that subframe to that line cluster angle
+
+        raw_output_list = []
+        for clusters in clusters_list:
+            # TODO: need to somehow find the longest cluster in a list of clusters
+            # each cluster is a list of line segments
+            # cluster_list is a 3D array
+
+            largest_cluster_length = 0
+            largest_cluster = None
+            for cluster in clusters:
+                cluster_magnitude = compute_cluster_magnitude(cluster)
+                if cluster_magnitude > largest_cluster_length:
+                    largest_cluster_length = cluster_magnitude
+                    largest_cluster = largest_cluster
+
+            raw_output_list.append(compute_cluster_direction(largest_cluster))
+
+        # TODO: generate weights for each subframe
+        # sum of weights must equal 1
+        # weights must increase exponentially/non-linearly from the lowest section
+
+        weight_list = generate_weight_list(NUMBER_OF_SUBDIVISIONS)
+
+        # TODO: apply weights to the list of output angles
+
+        weighted_output_angle_list = []
+        for i, output_angle in enumerate(raw_output_list):
+            weighted_output = weight_list[i] * output_angle
+            weighted_output_angle_list.append(weighted_output)
+
+        # TODO: set final output angle to the sum of angles (with weights applied)
+
+        final_output_angle = 0
+        for output_angle in weighted_output_angle_list:
+            final_output_angle += output_angle
+
+        print "DEBUG: final output angle: %s" % final_output_angle
+
+        cv2.imshow("asdf", image)
+        cv2.imshow("asdfkg", frame)
+
+        try:
+            # TODO: insert stuff here
+
+            if cv2.waitKey(30) != 255:
+                break
+        except Exception as e:
+            print ">>> Exception: %s" % e
+
+        end_time = time.time()
+        print "Framerate: %s" % str(int(1 / (end_time - start_time)))
+
+    if use_webcam:
+        camera.release()
+        cv2.destroyAllWindows()
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
 
     if len(args) == 1:
-        if args[0] == "test":
+        if args[0] == "prox":
             test_proximity()
+        if args[0] == "sum":
+            test_weighted_sum()
     else:
         main()
