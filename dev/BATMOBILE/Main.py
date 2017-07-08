@@ -1,7 +1,16 @@
+"""
+Main.py
+
+The controller of the entire system. All other scripts are called
+from the main function within this script.
+
+"""
+
 import Constants
 import Utility
 import sys
 import getopt
+
 
 def main(debug=False):
     pass
@@ -9,8 +18,8 @@ def main(debug=False):
 
 if __name__ == "__main__":
     try:
-        opts, args = getopt.getopt(argv, "d", ["speed=", "starttraffic", "startcircuit", "startdrag"])
-    except getopt.GetoptError
+        opts, args = getopt.getopt(sys.argv, "d", ["speed=", "starttraffic", "startcircuit", "startdrag"])
+    except getopt.GetoptError:
         # TODO: print usage
         sys.exit(2)
 

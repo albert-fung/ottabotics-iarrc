@@ -1,6 +1,6 @@
 # Image constants
 
-CAMERA_FRAME_HEIGHT = 480
+IMAGE_HEIGHT = 480
 
 # Houghline constants
 
