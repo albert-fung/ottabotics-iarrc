@@ -77,7 +77,7 @@ def split_frame(image, number_of_subimages):
             start_index = end_index + 1
             end_index += final_y
         except Exception as e:
-            print ">>> Exception: %s" % e
+            get_stacktrace()
 
     return subimage_list
 
@@ -91,9 +91,9 @@ def get_roi(img, points):
     """
     x_list = []
     y_list = []
-    for i in range(0, len(points),2):
+    for i in range(0, len(points), 2):
         x_list.append(points[i])
-    for i in range(1, len(points),2):
+    for i in range(1, len(points), 2):
         y_list.append(points[i])
 
     tl = (min(x_list), min(y_list))
@@ -121,7 +121,8 @@ def get_colour_hsv(img, point):
     """
     try:
         img_hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    except:
+    except Exception as e:
+        get_stacktrace()
         img_hsv = img
     colour = img[point[0]][point[1]].ravel().tolist()
     colour[0] = int(colour[0] * 2)
@@ -132,4 +133,9 @@ def get_colour_hsv(img, point):
 
 def get_stacktrace():
     import traceback
+    print "======================"
+    print "<< Exception caught >>"
+    print "======================"
+    traceback.print_exc()
+    print "======================"
     return traceback.format_exc()

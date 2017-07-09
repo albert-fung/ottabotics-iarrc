@@ -1,7 +1,12 @@
 """
 Check if the wireless stop has been triggered. The output
 remains constant after the trigger is detected.
+
+Open poll_arduino() in a separate thread. 
+Add static variable for trigger status.
 """
+
+# TODO: create class
 
 
 WIRELESS_STOP_TRIGGERED = False

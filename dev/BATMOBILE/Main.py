@@ -10,10 +10,52 @@ import Constants
 import Utility
 import sys
 import getopt
+import cv2
+import numpy as np
+import TrafficLightDetector
+import ArduinoController
+import ArduinoEStop
+import Pathfinder
 
 
-def main(debug=False):
-    pass
+def main(test_image="", use_webcam=True, debug_messages=False):
+    # TODO: initialize camera
+    camera = cv2.VideoCapture(0)
+
+    while True:
+        if use_webcam:
+            try:
+                ret, frame = camera.read()
+            except:
+                print "Camera is not attached. Exiting"
+                Utility.get_stacktrace()
+                return -1
+        else:
+            try:
+                frame = cv2.imread(test_image, 1)
+            except:
+                print "Test image file was not set. Exiting"
+                Utility.get_stacktrace()
+                return -1
+
+        image = Utility.apply_preprocessing(frame)
+
+        # TODO: check traffic light detector status
+
+        if TrafficLightDetector.ready_to_start(image):
+            break
+
+        break
+
+    while True:
+        # TODO: check estop status
+        if ArduinoEStop.stop_triggered():
+            return 0
+        # TODO: get turn angle from pathfinder
+        turn_angle = Pathfinder.compute_turn_angle(image)
+        # TODO: send angle to arduino controller
+        ArduinoController.set_turn_angle(turn_angle)
+        break
 
 
 if __name__ == "__main__":

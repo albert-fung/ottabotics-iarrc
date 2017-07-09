@@ -7,7 +7,8 @@ import math
 # Functions accessed by main
 
 
-def compute_turn_angle():
+def compute_turn_angle(images):
+
     pass
 
 
