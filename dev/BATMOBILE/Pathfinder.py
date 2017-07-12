@@ -2,12 +2,22 @@ from Constants import *
 import cv2
 import numpy as np
 import math
+import Utility
 
 
 # Functions accessed by main
 
 
-def compute_turn_angle(images):
+def compute_turn_angle(image):
+    # TODO: segment the frame horizontally
+    subframe_list = split_frame(image, 5)
+
+
+    # TODO: get line segments
+
+    # TODO: cluster lines by angle
+
+    # TODO: apply weighted sum to dominant line angles
 
     pass
 
@@ -133,3 +143,31 @@ def generate_weight_list(number_of_weights):
     print "DEBUG: weight sum: %s" % weight_sum
 
     return weight_list
+
+
+def split_frame(image, number_of_subimages):
+    """
+    Split an image into a list of subimages
+    :param image: 
+    :param number_of_subimages:
+    :return: 
+    """
+    initial_x = image.shape[1]
+    initial_y = image.shape[0]
+
+    final_y = int(initial_y / number_of_subimages)
+
+    subimage_list = []
+
+    start_index = 0
+    end_index = final_y
+
+    for i in range(number_of_subimages):
+        try:
+            subimage_list.append(image[:][start_index:end_index])
+            start_index = end_index + 1
+            end_index += final_y
+        except Exception as e:
+            Utility.get_stacktrace()
+
+    return subimage_list

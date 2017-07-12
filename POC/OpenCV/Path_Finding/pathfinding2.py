@@ -79,7 +79,19 @@ def get_line_segments(image):
 
     lines = cv2.HoughLinesP(mask_edges, 1, np.pi/180, threshold, min_line_length, max_line_gap)
 
-    return lines
+    # TODO: create list of Line objects
+
+    line_object_list = []
+
+    for line in lines:
+        # print repr(line)
+        x1 = line[0][0]
+        y1 = line[0][1]
+        x2 = line[0][2]
+        y2 = line[0][3]
+        line_object_list.append(Line(x1, y1, x2, y2))
+
+    return line_object_list
 
 
 def resize_image(img, height):
@@ -255,7 +267,7 @@ def compute_cluster_direction(cluster):
 def generate_weight_list(number_of_weights):
     weight_list = []
     for i in range(number_of_weights):
-        weight_list.append(1 / 2**(i+1))
+        weight_list.append(1.0 / 2**(i+1))
 
     weight_sum = 0
     for w in weight_list:
@@ -341,7 +353,7 @@ def test_weighted_sum(use_webcam=False):
         if use_webcam:
             ret, frame = camera.read()
         else:
-            frame = cv2.imread("test_sample_3.png", 1)
+            frame = cv2.imread("test_sample_4.png", 1)
         image = apply_preprocessing(frame)
 
         # TODO: separate frame horizontally into subframes
@@ -357,11 +369,13 @@ def test_weighted_sum(use_webcam=False):
         for subframe in subframe_list:
             list_of_segment_lists.append(get_line_segments(subframe))
 
+        # TODO: create list of Line objects
+
         # TODO: apply angle clustering to each subframe to get a list of output angles
 
         clusters_list = []
         for segment_list in list_of_segment_lists:
-            clusters_list.append(cluster_by_angle(segment_list))
+            clusters_list.append(cluster_by_angle(segment_list))  # cluster by angle takes a list of Line objects
 
         # TODO: find longest line cluster for each cluster
         # set output angle for that subframe to that line cluster angle
@@ -378,7 +392,7 @@ def test_weighted_sum(use_webcam=False):
                 cluster_magnitude = compute_cluster_magnitude(cluster)
                 if cluster_magnitude > largest_cluster_length:
                     largest_cluster_length = cluster_magnitude
-                    largest_cluster = largest_cluster
+                    largest_cluster = cluster
 
             raw_output_list.append(compute_cluster_direction(largest_cluster))
 
@@ -387,6 +401,8 @@ def test_weighted_sum(use_webcam=False):
         # weights must increase exponentially/non-linearly from the lowest section
 
         weight_list = generate_weight_list(NUMBER_OF_SUBDIVISIONS)
+        print "DEBUG: weight list"
+        print weight_list
 
         # TODO: apply weights to the list of output angles
 
@@ -416,6 +432,8 @@ def test_weighted_sum(use_webcam=False):
 
         end_time = time.time()
         print "Framerate: %s" % str(int(1 / (end_time - start_time)))
+
+        break
 
     if use_webcam:
         camera.release()
