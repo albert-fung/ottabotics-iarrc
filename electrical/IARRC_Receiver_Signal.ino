@@ -71,10 +71,11 @@ void setPwmFrequency(int pin, int divisor) {
 }
 
 void setup() {
+  pinMode(3, INPUT);
   Serial.begin (9600);
   setPwmFrequency(CH1, 256);     // CH1: Stearing
   setPwmFrequency(CH2, 256);     // CH2: Speed Control
-  analogWrite (CH1,47 );
+  analogWrite (CH1,47);
   analogWrite(CH2, 47);  delay(2000); //Arduino power by speed control so that when you start the speed control you can start the ardunio code to run the null signal
 }
 
@@ -87,6 +88,13 @@ void loop() {
       servoAngle = Serial.read();
       }
    }
-  analogWrite (CH1,servoAngle);       // 32left /47/62right servo angle variable
-  analogWrite (CH2,servoSpeed);       //32back/47/62forwad speed variable
+  analogWrite (CH1,servoAngle);       // 32left/47/62right servo angle variable
+  analogWrite (CH2,servoSpeed);       //32back/47/62forward speed variable
+  
+  if (pulseIn(3, HIGH)>1600){
+    while (1){
+      analogWrite (CH1, 47);
+      analogWrite (CH2, 47);
+    }
+  }
 }
