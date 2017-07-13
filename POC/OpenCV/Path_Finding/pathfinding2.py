@@ -29,6 +29,11 @@ class Line:
         self.p1 = (x1, y1)
         self.p2 = (x2, y2)
 
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+
         # set length
         self.length = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
@@ -83,13 +88,16 @@ def get_line_segments(image):
 
     line_object_list = []
 
-    for line in lines:
-        # print repr(line)
-        x1 = line[0][0]
-        y1 = line[0][1]
-        x2 = line[0][2]
-        y2 = line[0][3]
-        line_object_list.append(Line(x1, y1, x2, y2))
+    try:
+        for line in lines:
+            # print repr(line)
+            x1 = line[0][0]
+            y1 = line[0][1]
+            x2 = line[0][2]
+            y2 = line[0][3]
+            line_object_list.append(Line(x1, y1, x2, y2))
+    except:
+        pass
 
     return line_object_list
 
@@ -258,10 +266,14 @@ def split_frame(image, number_of_subimages):
 
 def compute_cluster_direction(cluster):
     angle_sum = 0
-    for line_segment in cluster:
-        angle_sum += line_segment.angle
 
-    return angle_sum / len(cluster)
+    try:
+        for line_segment in cluster:
+            angle_sum += line_segment.angle
+
+        return angle_sum / len(cluster)
+    except:
+        return 0
 
 
 def generate_weight_list(number_of_weights):
@@ -282,7 +294,7 @@ def generate_weight_list(number_of_weights):
     weight_sum = 0
     for w in weight_list:
         weight_sum += w
-    print "DEBUG: weight sum: %s" % weight_sum
+    # print "DEBUG: weight sum: %s" % weight_sum
 
     return weight_list
 
@@ -360,7 +372,7 @@ def test_weighted_sum(use_webcam=False):
 
         subframe_list = split_frame(image, NUMBER_OF_SUBDIVISIONS)
         # image = subframe_list[0]
-        print "DEBUG: Number of subframes: %s" % len(subframe_list)
+        # print "DEBUG: Number of subframes: %s" % len(subframe_list)
 
         # TODO: get line segments for each subframe
 
@@ -368,6 +380,17 @@ def test_weighted_sum(use_webcam=False):
         list_of_segment_lists = []
         for subframe in subframe_list:
             list_of_segment_lists.append(get_line_segments(subframe))
+
+        # TODO: draw line segments on image
+        for i, line_list in enumerate(list_of_segment_lists):
+            y_value_multiplier = (float(i) / NUMBER_OF_SUBDIVISIONS) * IMAGE_HEIGHT
+            print y_value_multiplier
+            for line in line_list:
+                cv2.line(image,
+                         (line.x1, int(line.y1 + y_value_multiplier)),
+                         (line.x2, int(line.y2 + y_value_multiplier)),
+                         (0, 255, 0),
+                         2)
 
         # TODO: create list of Line objects
 
@@ -401,8 +424,8 @@ def test_weighted_sum(use_webcam=False):
         # weights must increase exponentially/non-linearly from the lowest section
 
         weight_list = generate_weight_list(NUMBER_OF_SUBDIVISIONS)
-        print "DEBUG: weight list"
-        print weight_list
+        # print "DEBUG: weight list"
+        # print weight_list
 
         # TODO: apply weights to the list of output angles
 
@@ -420,7 +443,7 @@ def test_weighted_sum(use_webcam=False):
         print "DEBUG: final output angle: %s" % final_output_angle
 
         cv2.imshow("asdf", image)
-        cv2.imshow("asdfkg", frame)
+        # cv2.imshow("asdfkg", frame)
 
         try:
             # TODO: insert stuff here
@@ -430,10 +453,11 @@ def test_weighted_sum(use_webcam=False):
         except Exception as e:
             print ">>> Exception: %s" % e
 
+        if not use_webcam:
+            break
+
         end_time = time.time()
         print "Framerate: %s" % str(int(1 / (end_time - start_time)))
-
-        break
 
     if use_webcam:
         camera.release()
@@ -447,6 +471,12 @@ if __name__ == "__main__":
         if args[0] == "prox":
             test_proximity()
         if args[0] == "sum":
-            test_weighted_sum()
+            test_weighted_sum(False)
+    elif len(args) == 2:
+        if args[0] == "sum":
+            if args[1] == "cam":
+                test_weighted_sum(True)
+            elif args[1] == "img":
+                test_weighted_sum(False)
     else:
         main()
