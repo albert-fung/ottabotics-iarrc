@@ -10,19 +10,109 @@ import Utility
 
 def compute_turn_angle(image):
     # TODO: segment the frame horizontally
-    subframe_list = split_frame(image, 5)
-
+    subframe_list = split_frame(image, NUMBER_OF_SUBDIVISIONS)
 
     # TODO: get line segments
 
+    # 2D array - list of lists of line segments
+    list_of_segment_lists = []
+    for subframe in subframe_list:
+        list_of_segment_lists.append(get_line_segments(subframe))
+
     # TODO: cluster lines by angle
+
+    clusters_list = []
+    for segment_list in list_of_segment_lists:
+        clusters_list.append(cluster_by_angle(segment_list))  # cluster by angle takes a list of Line objects
+
+    # TODO: find longest line cluster
+
+    raw_output_list = []
+    for clusters in clusters_list:
+        # TODO: need to somehow find the longest cluster in a list of clusters
+        # each cluster is a list of line segments
+        # cluster_list is a 3D array
+
+        largest_cluster_length = 0
+        largest_cluster = None
+        for cluster in clusters:
+            cluster_magnitude = compute_cluster_magnitude(cluster)
+            if cluster_magnitude > largest_cluster_length:
+                largest_cluster_length = cluster_magnitude
+                largest_cluster = cluster
+
+        raw_output_list.append(compute_cluster_direction(largest_cluster))
+
+    if DEBUG_MESSAGES:
+        print "DEBUG >> Pathfinder.compute_turn_angle()"
+        print "\traw_output_list: %s" % raw_output_list
+
+    # TODO: generate weights for each subframe
+
+    weight_list = generate_weight_list(NUMBER_OF_SUBDIVISIONS)
 
     # TODO: apply weighted sum to dominant line angles
 
-    pass
+    weighted_output_angle_list = []
+    for i, output_angle in enumerate(raw_output_list):
+        weighted_output = weight_list[i] * output_angle
+        weighted_output_angle_list.append(weighted_output)
+
+    # TODO: set final output angle to the sum of angles (with weights applied)
+
+    final_output_angle = 0
+    for output_angle in weighted_output_angle_list:
+        final_output_angle += output_angle
+
+    return final_output_angle
 
 
 # Helper functions
+
+class Line:
+    def __init__(self, x1, y1, x2, y2):
+        # set start and end points
+        self.p1 = (x1, y1)
+        self.p2 = (x2, y2)
+
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+
+        # set length
+        self.length = math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
+
+        # compute line angle
+        dx = x2 - x1
+        dy = y2 - y1
+        rads = math.atan2(-dy, dx)
+        rads %= 2 * math.pi
+        degs = -math.degrees(rads)
+        if degs <= -180:
+            degs += 180
+        degs += 90
+        self.angle = degs
+
+        # set midpoint
+        self.midpoint = (((x1 + x2) / 2), ((y1 + y2) / 2))
+
+    def __str__(self):
+        return str(self.angle)
+
+    def __repr__(self):
+        return self.__str__()
+
+    def get_coords(self):
+        return self.p1, self.p2
+
+
+class Cluster:
+    def __init__(self, cluster):
+        self.cluster = cluster
+        self.magnitude = compute_cluster_magnitude(cluster)
+        self.position = compute_cluster_position(cluster)
+
 
 def get_line_segments(image):
     """
@@ -40,7 +130,22 @@ def get_line_segments(image):
 
     lines = cv2.HoughLinesP(mask_edges, 1, np.pi/180, threshold, min_line_length, max_line_gap)
 
-    return lines
+    # create list of Line objects
+
+    line_object_list = []
+
+    try:
+        for line in lines:
+            # print repr(line)
+            x1 = line[0][0]
+            y1 = line[0][1]
+            x2 = line[0][2]
+            y2 = line[0][3]
+            line_object_list.append(Line(x1, y1, x2, y2))
+    except:
+        pass
+
+    return line_object_list
 
 
 def cluster_by_angle(line_list):
@@ -125,7 +230,7 @@ def compute_cluster_direction(cluster):
 def generate_weight_list(number_of_weights):
     weight_list = []
     for i in range(number_of_weights):
-        weight_list.append(1 / 2**(i+1))
+        weight_list.append(1.0 / 2**(i+1))
 
     weight_sum = 0
     for w in weight_list:
@@ -140,7 +245,11 @@ def generate_weight_list(number_of_weights):
     weight_sum = 0
     for w in weight_list:
         weight_sum += w
-    print "DEBUG: weight sum: %s" % weight_sum
+
+    if DEBUG_MESSAGES:
+        print "DEBUG >> Pathfinder.generate_weight_list()"
+        print "\tweight_list: %s" % weight_list
+        print "\tweight_sum: %s" % weight_sum
 
     return weight_list
 
@@ -171,3 +280,12 @@ def split_frame(image, number_of_subimages):
             Utility.get_stacktrace()
 
     return subimage_list
+
+
+def main():
+    image = Utility.resize_image(cv2.imread("SampleImages/test_sample_4.png", 1), 480)
+    print compute_turn_angle(image)
+
+
+if __name__ == "__main__":
+    main()

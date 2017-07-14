@@ -12,6 +12,10 @@ HOUGH_THRESHOLD = 20
 
 CLUSTER_MIN_SIZE = 10
 
+# Pathfinder
+
+NUMBER_OF_SUBDIVISIONS = 5
+
 # Debug messages
 
 DEBUG_MESSAGES = True
