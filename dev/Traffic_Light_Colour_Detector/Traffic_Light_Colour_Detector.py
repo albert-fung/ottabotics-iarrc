@@ -186,10 +186,11 @@ def main():
     mask = mask_all_circles(traffic_light, circles)
     draw_all_circles(mask,circles)
 
-    cv2.imshow("Original Traffic Light",traffic_light)
-    cv2.imshow("Masked Traffic Light",mask)
-    # cv2.imshow("Original query image",query)
-    # cv2.imshow("ROI of query",roi)
+    # cv2.imshow("Original Traffic Light",traffic_light)
+    # cv2.imshow("Masked Traffic Light",mask)
+    cv2.imshow("Reference", reference)
+    cv2.imshow("Original query image",query)
+    cv2.imshow("ROI of query",roi)
     cv2.waitKey(0)
 
 

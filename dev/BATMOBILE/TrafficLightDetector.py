@@ -23,12 +23,29 @@ def ready_to_start(query_image, reference_image_file="SampleImages/card_referenc
     :return: bool
     """
     # reference_image = cv2.imread(reference_image_file, 1)
-    reference_image = cv2.imread("SampleImages/stoplight2.jpg", 1)
+    # reference_image = cv2.imread("SampleImages/stoplight2.jpg", 1)
     traffic_light_test = cv2.imread("SampleImages/stoplight2.jpg", 1)
+    reference_image = Utility.resize_image(cv2.imread("SampleImages/ottabotics_bunny.jpg", 1), 480)
+    query_image = Utility.resize_image(cv2.imread("SampleImages/ottabotics_bunny_sample_3.jpg", 1), 480)
 
     dst_points = match_features(query_image, reference_image)
     print ">>> dst_points:"
     print dst_points
+    print dst_points[0]
+
+    """
+    for i in range(0, len(dst_points), 4):
+        try:
+            cv2.line(query_image, (dst_points[i], dst_points[i+1]), (dst_points[i+2], dst_points[i+3]), (0, 255, 0), 2)
+        except:
+            Utility.get_stacktrace()
+    """
+    for i in range(0, len(dst_points), 2):
+        try:
+            cv2.circle(query_image, (dst_points[i], dst_points[i+1]), 3, (128, 255, 128), 2)
+        except:
+            Utility.get_stacktrace()
+
     roi = Utility.get_roi(query_image, dst_points)
     circles = find_circles(roi)
     # circles = find_circles(traffic_light_test)
@@ -59,8 +76,9 @@ def ready_to_start(query_image, reference_image_file="SampleImages/card_referenc
             break
 
     # cv2.imshow("masked", traffic_light_test)
-    cv2.imshow("asfadsf", reference_image   )
+    cv2.imshow("asfadsf", reference_image)
     cv2.imshow("masked", roi)
+    cv2.imshow("query", query_image)
     cv2.waitKey(0)
 
 # Helper functions
@@ -100,14 +118,14 @@ def match_features(reference, query, min_match_count=10):
             good.append(m)
 
     if len(good) > min_match_count:
-        src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1,1,2)
-        dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1,1,2)
+        src_pts = np.float32([kp1[m.queryIdx].pt for m in good]).reshape(-1, 1, 2)
+        dst_pts = np.float32([kp2[m.trainIdx].pt for m in good]).reshape(-1, 1, 2)
 
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
         matches_mask = mask.ravel().tolist()
 
         h, w = query_grey.shape
-        pts = np.float32([[0, 0], [0, h-1], [w-1,h-1], [w-1, 0]]).reshape(-1,1,2)
+        pts = np.float32([[0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]).reshape(-1, 1, 2)
         dst = cv2.perspectiveTransform(pts,M)
 
         dst_list = dst.ravel().tolist()
@@ -221,8 +239,8 @@ def main():
     image = cv2.imread("SampleImages/traffic_light_bunny_2.jpg", 1)
     image = Utility.resize_image(image, 480)
 
-    cv2.imshow("asfd", image)
-    cv2.waitKey(0)
+    # cv2.imshow("asfd", image)
+    # cv2.waitKey(0)
 
     ready_to_start(image)
 
