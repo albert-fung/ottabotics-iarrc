@@ -48,9 +48,12 @@ def main(test_image="", use_webcam=True, debug_messages=False):
         break
 
     while True:
+        """
         # TODO: check estop status
         if ArduinoEStop.stop_triggered():
             return 0
+        """
+
         # TODO: get turn angle from pathfinder
         turn_angle = Pathfinder.compute_turn_angle(image)
         # TODO: send angle to arduino controller
