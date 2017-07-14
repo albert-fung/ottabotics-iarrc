@@ -34,7 +34,7 @@ def record_video():
     pass
 
 
-def apply_perspective_transformation(image):
+def apply_perspective_transformation_old(image):
     height = image.shape[0]
     width = image.shape[1]
 
@@ -85,15 +85,11 @@ def apply_perspective_transformation(image):
 
 
 def four_point_transform(pts=None):
+    # POC
     final_top_left = (60, 155)
     final_top_right = (155, 60)
     final_bottom_left = (325, 420)
     final_bottom_right = (420, 325)
-
-    pts = [tuple(final_top_left),
-           tuple(final_top_right),
-           tuple(final_bottom_right),
-           tuple(final_bottom_left)]
 
     pts = np.array([final_top_left,
                     final_top_right,
@@ -101,12 +97,14 @@ def four_point_transform(pts=None):
                     final_bottom_left],
                    dtype="float32")
 
-    max_width, max_height = 300, 300
+    max_width, max_height = 450, 450
     hwratio = 11 / 8.5  # letter size paper
     scale = int(max_width / 12)
 
-    center_x = 150
-    center_y = 250
+    # center_x = 150
+    center_x = int(max_width / 2)
+    # center_y = 250
+    center_y = int(max_height * 2/3)
 
     dst = np.array([
         [center_x - scale, center_y - scale * hwratio],  # top left
@@ -119,6 +117,45 @@ def four_point_transform(pts=None):
     M = cv2.getPerspectiveTransform(pts, dst)
 
     return M
+
+
+def apply_perspective_transformation(image):
+    final_top_left = (228, 170)
+    final_top_right = (500, 210)
+    final_bottom_left = (225, 325)
+    final_bottom_right = (515, 325)
+
+    pts = np.array([final_top_left,
+                    final_top_right,
+                    final_bottom_right,
+                    final_bottom_left],
+                   dtype="float32")
+
+    max_height = image.shape[0]
+    max_width = image.shape[1]
+    hwratio = 11 / 8.5  # letter size paper
+    scale = int(max_width / 12)
+
+    center_x = int(max_width / 2)
+    center_y = int(max_height * 2 / 3)
+
+    dst = np.array([
+        [center_x - scale, center_y - scale * hwratio],  # top left
+        [center_x + scale, center_y - scale * hwratio],  # top right
+        [center_x + scale, center_y + scale * hwratio],  # bottom right
+        [center_x - scale, center_y + scale * hwratio],  # bottom left
+    ], dtype="float32")
+
+    # compute the perspective transform matrix and then apply it
+    M = cv2.getPerspectiveTransform(pts, dst)
+
+    try:
+        output = cv2.warpPerspective(image, M, (max_width, max_height))
+
+        return output
+    except:
+        get_stacktrace()
+        return image
 
 
 def generate_perspective_transformation_params():
