@@ -55,10 +55,9 @@ def main(test_image="", use_webcam=True, debug_messages=False):
         """
 
         # TODO: get turn angle from pathfinder
-        turn_angle = Pathfinder.compute_turn_angle(image)
+        turn_angle = Pathfinder.compute_turn_angle(Utility.apply_perspective_transformation(image))
         # TODO: send angle to arduino controller
-        ArduinoController.set_turn_angle(turn_angle)
-        break
+        ArduinoController.move(angle=turn_angle)
 
 
 if __name__ == "__main__":

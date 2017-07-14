@@ -133,8 +133,8 @@ def apply_perspective_transformation(image):
 
     max_height = image.shape[0]
     max_width = image.shape[1]
-    hwratio = 11 / 8.5  # letter size paper
-    scale = int(max_width / 12)
+    hwratio = PAPER_DIMENSIION_HEIGHT / PAPER_DIMENSION_WIDTH  # letter size paper
+    scale = int(max_width / PERSPECTIVE_TRANSFORM_SCALE_FACTOR)
 
     center_x = int(max_width / 2)
     center_y = int(max_height * 2 / 3)
