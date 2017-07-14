@@ -11,3 +11,7 @@ HOUGH_THRESHOLD = 20
 # Cluster constants
 
 CLUSTER_MIN_SIZE = 10
+
+# Debug messages
+
+DEBUG_MESSAGES = True
