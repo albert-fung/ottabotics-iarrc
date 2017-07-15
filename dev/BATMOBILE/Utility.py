@@ -263,3 +263,18 @@ def get_stacktrace():
     error = traceback.format_exc()
     write_to_log(error)
     return error
+
+
+class PIDController:
+    def __init__(self, start_value=0):
+        self.error_integral = 0
+        self.k_p = 1
+        self.k_i = 1
+        self.k_d = 0
+        self.value = start_value
+
+    def compute_error(self, desired_value):
+        return desired_value - self.value
+
+    def compute_next_value(self, desired_value):
+        pass

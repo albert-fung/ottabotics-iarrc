@@ -61,6 +61,7 @@ def main(test_image="", use_webcam=True, debug_messages=False):
 
 
 if __name__ == "__main__":
+    """
     try:
         opts, args = getopt.getopt(sys.argv, "d", ["speed=", "starttraffic", "startcircuit", "startdrag"])
     except getopt.GetoptError:
@@ -81,3 +82,6 @@ if __name__ == "__main__":
         if opt == "--speed":
             # set speed variable
             pass
+    """
+    main()
+

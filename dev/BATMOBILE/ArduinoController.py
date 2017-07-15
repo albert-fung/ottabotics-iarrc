@@ -23,13 +23,21 @@ def move(angle=47, speed=50):
     :return: 
     """
     try:
-        ser = serial.Serial('/dev/ttyUSB0')
+        ser = serial.Serial('/dev/ttyACM0')
 
         ser.write(chr(255))
         ser.write(chr(speed))
-
         ser.write(chr(angle))
     except:
         Utility.get_stacktrace()
 
 # Helper functions
+
+
+def main():
+    ser = serial.Serial("/dev/ttyACM0")
+    print ser.read()
+
+
+if __name__ == "__main__":
+    main()
